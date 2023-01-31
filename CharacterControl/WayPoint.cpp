@@ -34,28 +34,10 @@ int Event_CREATE_WAYPOINT::l_Construct(lua_State* luaVM)
 
 	// get arguments from stack
 	int numArgs, numArgsConst;
-	numArgs = numArgsConst = 18;
-
-	const char* nextPossabileWPName0 = lua_tostring(luaVM, -numArgs--);
-	const char* nextPossabileWPName1 = lua_tostring(luaVM, -numArgs--);
-	const char* nextPossabileWPName2 = lua_tostring(luaVM, -numArgs--);
+	numArgs = numArgsConst = 15;
 
 	const char* wayPointName = lua_tostring(luaVM, -numArgs--);
 	const char* nextWayPointName = lua_tostring(luaVM, -numArgs--);
-
-	// Calculate next waypoint
-	int randNum = rand() % 3;
-	if (randNum == 0) {
-		nextWayPointName = nextPossabileWPName0;
-	}
-	else if (randNum == 1) {
-		nextWayPointName = nextPossabileWPName1;
-	}
-	else if (randNum == 2) {
-		nextWayPointName = nextPossabileWPName2;
-	}
-
-
 
 	float positionFactor = 1.0f / 100.0f;
 	Vector3 pos, u, v, n;
