@@ -19,6 +19,9 @@ struct Event_CREATE_WAYPOINT : public PE::Events::Event
 
 	Matrix4x4 m_base;
 	char m_name[32];
+	char m_nextPossibleWayPoint0[32];
+	char m_nextPossibleWayPoint1[32];
+	char m_nextPossibleWayPoint2[32];
 	char m_nextWaypointName[32];
 
 	PEUUID m_peuuid; // unique object id
@@ -35,6 +38,9 @@ struct WayPoint : public PE::Components::Component
 	virtual void addDefaultComponents() ;
 
 	char m_name[32];
+	char m_nextPossibleWayPoint0[32];
+	char m_nextPossibleWayPoint1[32];
+	char m_nextPossibleWayPoint2[32];
 	char m_nextWayPointName[32];
 	Matrix4x4 m_base;
 

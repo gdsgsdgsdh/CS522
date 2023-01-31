@@ -43,17 +43,17 @@ int Event_CREATE_WAYPOINT::l_Construct(lua_State* luaVM)
 	const char* wayPointName = lua_tostring(luaVM, -numArgs--);
 	const char* nextWayPointName = lua_tostring(luaVM, -numArgs--);
 
-	// Calculate next waypoint
-	int randNum = rand() % 3;
-	if (randNum == 0) {
-		nextWayPointName = nextPossabileWPName0;
-	}
-	else if (randNum == 1) {
-		nextWayPointName = nextPossabileWPName1;
-	}
-	else if (randNum == 2) {
-		nextWayPointName = nextPossabileWPName2;
-	}
+	//// Calculate next waypoint
+	//int randNum = rand() % 3;
+	//if (randNum == 0) {
+	//	nextWayPointName = nextPossabileWPName0;
+	//}
+	//else if (randNum == 1) {
+	//	nextWayPointName = nextPossabileWPName1;
+	//}
+	//else if (randNum == 2) {
+	//	nextWayPointName = nextPossabileWPName2;
+	//}
 
 
 
@@ -74,6 +74,9 @@ int Event_CREATE_WAYPOINT::l_Construct(lua_State* luaVM)
 	// set data values before popping memory off stack
 	StringOps::writeToString(wayPointName, pEvt->m_name, 32);
 	StringOps::writeToString(nextWayPointName, pEvt->m_nextWaypointName, 32);
+	StringOps::writeToString(nextPossabileWPName0, pEvt->m_nextPossibleWayPoint0, 32);
+	StringOps::writeToString(nextPossabileWPName1, pEvt->m_nextPossibleWayPoint1, 32);
+	StringOps::writeToString(nextPossabileWPName2, pEvt->m_nextPossibleWayPoint2, 32);
 	
 	lua_pop(luaVM, numArgsConst); //Second arg is a count of how many to pop
 
@@ -98,6 +101,9 @@ WayPoint::WayPoint(PE::GameContext &context, PE::MemoryArena arena, PE::Handle h
 {
 	StringOps::writeToString(pEvt->m_name, m_name, 32);
 	StringOps::writeToString(pEvt->m_nextWaypointName, m_nextWayPointName, 32);
+	StringOps::writeToString(pEvt->m_nextPossibleWayPoint0, m_nextPossibleWayPoint0, 32);
+	StringOps::writeToString(pEvt->m_nextPossibleWayPoint1, m_nextPossibleWayPoint1, 32);
+	StringOps::writeToString(pEvt->m_nextPossibleWayPoint2, m_nextPossibleWayPoint2, 32);
 
 	m_base = pEvt->m_base;
 }
