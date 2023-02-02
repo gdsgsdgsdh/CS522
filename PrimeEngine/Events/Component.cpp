@@ -320,7 +320,7 @@ void Component::passEventToLuaCompTable(Event *pEvt)
 		//}
 		m_pContext->getLuaEnvironment()->passEventToQueue(pEvt);
 	}
-	popHandlingQueue(); // even if the table was not pushed. nill vas pushed so we need to pop
+		popHandlingQueue(); // even if the table was not pushed. nill vas pushed so we need to pop
 	popCompLuaTable();
 }
 

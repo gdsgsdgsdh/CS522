@@ -25,7 +25,7 @@ int Event_CreateSoldierNPC::l_Construct(lua_State* luaVM)
 	
 	// get arguments from stack
 	int numArgs, numArgsConst;
-	numArgs = numArgsConst = 19;
+	numArgs = numArgsConst = 20;
 
 	PE::GameContext *pContext = (PE::GameContext*)(lua_touserdata(luaVM, -numArgs--));
 
@@ -37,6 +37,7 @@ int Event_CreateSoldierNPC::l_Construct(lua_State* luaVM)
 
 	const char* gunMeshName = lua_tostring(luaVM, -numArgs--);
 	const char* gunMeshPackage = lua_tostring(luaVM, -numArgs--);
+	const char* aimTarget = lua_tostring(luaVM, -numArgs--);
 
 	float positionFactor = 1.0f / 100.0f;
 
@@ -62,14 +63,13 @@ int Event_CreateSoldierNPC::l_Construct(lua_State* luaVM)
 		// ignore
 		numArgs--;
 
-
 	// set data values before popping memory off stack
 	StringOps::writeToString(name, pEvt->m_meshFilename, 255);
 	StringOps::writeToString(package, pEvt->m_package, 255);
-
 	StringOps::writeToString(gunMeshName, pEvt->m_gunMeshName, 64);
 	StringOps::writeToString(gunMeshPackage, pEvt->m_gunMeshPackage, 64);
 	StringOps::writeToString(wayPointName, pEvt->m_patrolWayPoint, 32);
+	StringOps::writeToString(aimTarget, pEvt->m_aimTarget, 32);
 
 	lua_pop(luaVM, numArgsConst); //Second arg is a count of how many to pop
 
