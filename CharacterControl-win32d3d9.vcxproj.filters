@@ -49,6 +49,7 @@
     <ClInclude Include="CharacterControl\WayPoint.h" />
     <ClInclude Include="CharacterControl\test.h" />
     <ClInclude Include="CharacterControl\testfunc_c_stdcall.h" />
+    <ClInclude Include="CharacterControl\Target.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterControl\Characters\SoldierNPC.cpp">
@@ -83,9 +84,13 @@
     </ClCompile>
     <ClCompile Include="CharacterControl\WayPoint.cpp" />
     <ClCompile Include="CharacterControl\main.cpp" />
+    <ClCompile Include="CharacterControl\Target.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Masm Include="CharacterControl\test.asm" />
     <Masm Include="CharacterControl\testfunc_c_stdcall.asm" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CharacterControl\Target.mm" />
   </ItemGroup>
 </Project>
