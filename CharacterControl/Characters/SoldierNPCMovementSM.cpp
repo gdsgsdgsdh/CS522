@@ -84,6 +84,7 @@ void SoldierNPCMovementSM::do_SoldierNPCMovementSM_Event_STOP(PE::Events::Event 
 
 	SoldierNPC *pSol = getFirstParentByTypePtr<SoldierNPC>();
 	pSol->getFirstComponent<PE::Components::SceneNode>()->handleEvent(&Evt);
+	
 }
 
 void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
@@ -148,6 +149,10 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 						
 						SoldierNPC *pSol = getFirstParentByTypePtr<SoldierNPC>();
 						pSol->getFirstComponent<PE::Components::SceneNode>()->handleEvent(&evt);
+
+						Events::SoldierNPCAnimSM_Event_STAND_SHOOT Evt1;
+						SoldierNPC* pSol1 = getFirstParentByTypePtr<SoldierNPC>();
+						pSol1->getFirstComponent<PE::Components::SceneNode>()->handleEvent(&Evt1);
 					}
 				}
 			}

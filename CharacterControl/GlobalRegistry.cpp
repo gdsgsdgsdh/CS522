@@ -3,6 +3,7 @@
 #include "GlobalRegistry.h"
 
 #include "WayPoint.h"
+#include "Target.h"
 #include "Characters/SoldierNPC.h"
 #include "Characters/SoldierNPCAnimationSM.h"
 #include "Characters/SoldierNPCMovementSM.h"
@@ -39,6 +40,7 @@ void CharacterControl::Register(PE::Components::LuaEnvironment *pLuaEnv, PE::Glo
 			pLuaEnv->StartRegistrationTable("Components");
 			// start root.CharacterControl.Components
 			{
+				Target::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				WayPoint::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				SoldierNPC::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				SoldierNPCAnimationSM::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
@@ -61,6 +63,7 @@ void CharacterControl::Register(PE::Components::LuaEnvironment *pLuaEnv, PE::Glo
 			{
 				Event_CreateSoldierNPC::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				Event_CREATE_WAYPOINT::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
+				Event_CREATE_TARGET::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				SoldierNPCAnimSM_Event_STOP::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				SoldierNPCAnimSM_Event_WALK::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
 				SoldierNPCAnimSM_Event_STAND_SHOOT::InitializeAndRegister(pLuaEnv, pRegistry, setLuaMetaDataOnly);
