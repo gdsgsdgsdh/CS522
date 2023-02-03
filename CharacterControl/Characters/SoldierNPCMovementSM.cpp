@@ -1,7 +1,8 @@
 #include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
 
 #include "PrimeEngine/Lua/LuaEnvironment.h"
-
+#include "../ClientGameObjectManagerAddon.h"
+#include "../CharacterControlContext.h"
 #include "SoldierNPCMovementSM.h"
 #include "SoldierNPCAnimationSM.h"
 #include "SoldierNPC.h"
@@ -36,7 +37,7 @@ SoldierNPCMovementSM::SoldierNPCMovementSM(PE::GameContext &context, PE::MemoryA
 , m_state(STANDING)
 {}
 
-SceneNode *SoldierNPCMovementSM::getParentsSceneNode()
+SceneNode* SoldierNPCMovementSM::getParentsSceneNode()
 {
 	PE::Handle hParent = getFirstParentByType<Component>();
 	if (hParent.isValid())
@@ -118,6 +119,10 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 				// instantaneous turn
 				pSN->m_base.turnInDirection(dir, 3.1415f);
 				pSN->m_base.setPos(curPos + dir * dist);
+
+				// update positon
+				SoldierNPC* pSol = getFirstParentByTypePtr<SoldierNPC>();
+				pSol->m_base.setPos(curPos + dir * dist);
 			}
 
 			if (reached)
@@ -154,6 +159,39 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 						SoldierNPC* pSol1 = getFirstParentByTypePtr<SoldierNPC>();
 						pSol1->getFirstComponent<PE::Components::SceneNode>()->handleEvent(&Evt1);
 					}
+				}
+			}
+		}
+	}
+	else {
+		ClientGameObjectManagerAddon* pGameObjectManagerAddon = (ClientGameObjectManagerAddon*)(m_pContext->get<CharacterControlContext>()->getGameObjectManagerAddon());
+		SoldierNPC* pWP = pGameObjectManagerAddon->getSoldierNPC(m_aimTarget);
+		if (pWP && StringOps::length(pWP->m_name) > 0) {
+			SceneNode* curpSN = getParentsSceneNode();
+			if (curpSN)
+			{
+				// Position NOW isHardcode in Solider.CPP!!!!!!1
+				Vector3 curPos = curpSN->m_base.getPos();
+				Vector3 targetPostion = pWP->m_base.getPos();
+				float dsqr = (targetPostion - curPos).lengthSqr();
+				bool reached = true;
+				if (dsqr > 0.01f)
+				{
+					// not at the spot yet
+					Event_UPDATE* pRealEvt = (Event_UPDATE*)(pEvt);
+					static float speed = 1.4f;
+					float allowedDisp = speed * pRealEvt->m_frameTime;
+					Vector3 dir = (targetPostion - curPos);
+					dir.normalize();
+					float dist = sqrt(dsqr);
+					if (dist > allowedDisp)
+					{
+						dist = allowedDisp; // can move up to allowedDisp
+						reached = false; // not reaching destination yet
+					}
+					// instantaneous turn
+					curpSN->m_base.turnInDirection(dir, 3.1415f);
+					// curpSN->m_base.setPos(curPos + dir * dist);
 				}
 			}
 		}

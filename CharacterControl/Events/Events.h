@@ -23,6 +23,7 @@ struct Event_CreateSoldierNPC : public PE::Events::Event_CREATE_MESH
 	char m_gunMeshPackage[64];
 	char m_patrolWayPoint[32];
 	char m_aimTarget[32];
+	char m_soldierName[32];
 };
 
 struct Event_MoveTank_C_to_S : public PE::Events::Event, public PE::Networkable

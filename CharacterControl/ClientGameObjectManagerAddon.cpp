@@ -83,6 +83,26 @@ void ClientGameObjectManagerAddon::do_CREATE_WAYPOINT(PE::Events::Event *pEvt)
 	addComponent(hWayPoint);
 }
 
+ SoldierNPC* ClientGameObjectManagerAddon::getSoldierNPC(const char* name) {
+	PE::Handle* pHC = m_components.getFirstPtr();
+
+	for (PrimitiveTypes::UInt32 i = 0; i < m_components.m_size; i++, pHC++) // fast array traversal (increasing ptr)
+	{
+		Component* pC = (*pHC).getObject<Component>();
+
+		if (pC->isInstanceOf<SoldierNPC>())
+		{
+			SoldierNPC* pWP = (SoldierNPC*)(pC);
+			if (StringOps::strcmp(pWP->m_name, name) == 0)
+			{
+				// equal strings, found our waypoint
+				return pWP;
+			}
+		}
+	}
+	return NULL;
+}
+
 WayPoint *ClientGameObjectManagerAddon::getWayPoint(const char *name)
 {
 	PE::Handle *pHC = m_components.getFirstPtr();
