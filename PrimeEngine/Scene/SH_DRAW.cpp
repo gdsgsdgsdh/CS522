@@ -6,6 +6,7 @@
 // Outer-Engine includes
 
 // Inter-Engine includes
+#include "PrimeEngine/Scene/DebugRenderer.h"
 #include "PrimeEngine/FileSystem/FileReader.h"
 #include "PrimeEngine/APIAbstraction/GPUMaterial/GPUMaterialSet.h"
 #include "PrimeEngine/PrimitiveTypes/PrimitiveTypes.h"
@@ -175,6 +176,20 @@ void MeshHelpers::setZOnlyEffectOfTopEffectSecuence(Mesh *pObj, Handle hNewEffec
 
 PE_IMPLEMENT_SINGLETON_CLASS1(SingleHandler_DRAW, Component);
 
+
+bool SingleHandler_DRAW::check_Object_In_Camera_View(Vector3 vertices[8], Matrix4x4 m_worldToViewTransform, Matrix4x4 m_cameraPlanes[6], Matrix4x4 worldMatrix) {
+	for (int i = 0; i < 8; ++i) {
+		Vector3 ver = worldMatrix * vertices[i];
+		ver = m_worldToViewTransform * ver;
+		for (int j = 0; j < 6; ++j) {
+			if ((ver - m_cameraPlanes[j].getPos()).dotProduct(m_cameraPlanes[j].getN()) < 0) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 {
 	// the mesh is who we are drawing for is previous distributor
@@ -193,10 +208,61 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
     
     pMeshCaller->m_numVisibleInstances = pMeshCaller->m_instances.m_size; // assume all instances are visible
     
-    // check for bounding volumes here and mark each instance as visible or not visible and set m_numVisibleInstances to number of visible instances
-    
-    // debug testing of instance culling. do collision check instead.
-    // remove false && to enable
+	if (pDrawEvent && pMeshCaller->m_performBoundingVolumeCulling) {
+		Matrix4x4 m_cameraViewBoundaryPlanes[6];
+		int index = 0;
+		for (auto& plane : pDrawEvent->m_cameraViewBoundaryPlanes) {
+			m_cameraViewBoundaryPlanes[index] = plane;
+			index++;
+		}
+		Matrix4x4 m_worldToViewTransform = pDrawEvent->m_worldToViewTransform;
+		pMeshCaller->m_numVisibleInstances = 0;
+		// check for bounding volumes here and mark each instance as visible or not visible and set m_numVisibleInstances to number of visible instances
+		for (int iInst = 0; iInst < pMeshCaller->m_instances.m_size; ++iInst)
+		{
+			MeshInstance* pInst = pMeshCaller->m_instances[iInst].getObject<MeshInstance>();
+			// get word transform matrix
+			Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
+			if (!hParentSN.isValid()) {
+				hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
+			}
+			Matrix4x4 worldMatrix;
+			Vector3 m_pos;
+			if (hParentSN.isValid()) {
+				SceneNode* pSN = hParentSN.getObject<SceneNode>();
+				worldMatrix = pSN->m_worldTransform;
+				m_pos = pSN->m_base.getPos();
+			}
+			PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+			Vector3 minPos = pPoss->minPos;
+			Vector3 maxPos = pPoss->maxPos;
+			Vector3 vertices[8];
+			MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
+			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
+			if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
+			{
+				pInst->m_culledOut = false;
+				++pMeshCaller->m_numVisibleInstances;
+			}
+			else
+			{
+				pInst->m_culledOut = true;
+			}
+			
+
+		}
+	}
+	if (pZOnlyDrawEvent) {
+		pMeshCaller->m_numVisibleInstances = 0;
+		for (int iInst = 0; iInst < pMeshCaller->m_instances.m_size; ++iInst)
+		{
+			MeshInstance* pInst = pMeshCaller->m_instances[iInst].getObject<MeshInstance>();
+			pInst->m_culledOut = false;
+			++pMeshCaller->m_numVisibleInstances;
+		}
+	}
+	
+
     if (false && pMeshCaller->m_performBoundingVolumeCulling)
     {
         pMeshCaller->m_numVisibleInstances = 0;
@@ -215,6 +281,8 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
             }
         }
     }
+
+
     
 
 	DrawList *pDrawList = pDrawEvent ? DrawList::Instance() : DrawList::ZOnlyInstance();
@@ -276,6 +344,19 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 	{
 		gatherDrawCallsForRange(pMeshCaller, pDrawList, &hVertexBuffersGPU[0], numVBufs, vbufWeights, iRange, pDrawEvent, pZOnlyDrawEvent);
 	}
+}
+
+void MeshHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]) {
+
+	vertices[0] = Vector3(min.m_x, min.m_y, min.m_z); 
+	vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);
+	vertices[2] = Vector3(min.m_x, max.m_y, min.m_z); 
+	vertices[3] = Vector3(min.m_x, max.m_y, max.m_z);
+	vertices[4] = Vector3(max.m_x, min.m_y, min.m_z); 
+	vertices[5] = Vector3(max.m_x, min.m_y, max.m_z);
+	vertices[6] = Vector3(max.m_x, max.m_y, min.m_z); 
+	vertices[7] = Vector3(max.m_x, max.m_y, max.m_z);
+
 }
 
 void SingleHandler_DRAW::gatherDrawCallsForRange(Mesh *pMeshCaller, DrawList *pDrawList,  PE::Handle *pHVBs, int vbCount, Vector4 &vbWeights, 

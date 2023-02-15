@@ -12,6 +12,7 @@
 #include "PrimeEngine/MemoryManagement/Handle.h"
 #include "PrimeEngine/PrimitiveTypes/PrimitiveTypes.h"
 #include "../../Utils/Array/Array.h"
+#include "PrimeEngine/Math/Vector3.h"
 
 // Sibling/Children includes
 
@@ -26,7 +27,7 @@ struct PositionBufferCPU : PE::PEAllocatableAndDefragmentable
 	void ReadPositionBuffer(const char *filename, const char *package = NULL);
 
 	void createEmptyCPUBuffer();
-
+	void getMinMaxPos(PrimitiveTypes::Float32 realVal, int idx);
 	void createBillboardCPUBuffer(PrimitiveTypes::Float32 w, PrimitiveTypes::Float32 h);
 	void createNormalizeBillboardCPUBufferXYWithPtOffsets(PrimitiveTypes::Float32 dx, PrimitiveTypes::Float32 dy);
 
@@ -43,6 +44,8 @@ struct PositionBufferCPU : PE::PEAllocatableAndDefragmentable
 	Array<PrimitiveTypes::Float32> m_values;
 
 	PE::GameContext *m_pContext;
+	Vector3 minPos;
+	Vector3 maxPos;
 };
 
 #endif

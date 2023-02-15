@@ -42,6 +42,25 @@ void PositionBufferCPU::ReadPositionBuffer(const char *filename, const char *pac
 	{
 		f.nextFloat32(val);
 		m_values.add(val * factor);
+		
+		getMinMaxPos(val * factor, i);
+	}
+
+}
+
+void PositionBufferCPU::getMinMaxPos(PrimitiveTypes::Float32 realVal, int index) {
+	int flag = index % 3;
+	if (index >= 3) {
+		if (realVal < minPos.m_values[flag]) {
+			minPos.m_values[flag] = realVal;
+		}
+		else if (realVal > maxPos.m_values[flag]) {
+			maxPos.m_values[flag] = realVal;
+		}
+	}
+	else {
+		minPos.m_values[flag] = realVal;
+		maxPos.m_values[flag] = realVal;
 	}
 }
 

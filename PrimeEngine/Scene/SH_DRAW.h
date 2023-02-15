@@ -52,6 +52,8 @@ struct SingleHandler_DRAW : public Component
 	}
 
 private:
+	bool check_Object_In_Camera_View(Vector3 vertices[8], Matrix4x4 m_worldToViewTransform, Matrix4x4 m_cameraViewBoundaryPlanes[6], Matrix4x4 worldMatrix);
+
 	void gatherDrawCallsForRange(Mesh *pMeshCaller, DrawList *pDrawList, PE::Handle *pHVBs, int vbCount, Vector4 &vbWeights, int iRange,
 		Events::Event_GATHER_DRAWCALLS *pDrawEvent, Events::Event_GATHER_DRAWCALLS_Z_ONLY *pZOnlyDrawEvent
 	);
@@ -159,7 +161,7 @@ struct MeshHelpers
 	static void analyzeTechniqueSequences(Mesh *pObj,
 	PrimitiveTypes::UInt32 &numRanges,
 	PrimitiveTypes::UInt32 &numFullSequences);
-
+	static void generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]);
 	static void pushEffects(Mesh *pObj);
 	static void popEffects(Mesh *pObj);
 	static void setPixelShadersOfTopEffects(PE::GameContext &context, PE::MemoryArena arena, Mesh *pObj);

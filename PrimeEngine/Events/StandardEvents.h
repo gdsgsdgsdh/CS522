@@ -68,6 +68,8 @@ struct Event_GATHER_DRAWCALLS : public Event {
 	Vector3 m_eyePos;
 	Vector3 m_eyeDir;
 
+	Matrix4x4 m_cameraViewBoundaryPlanes[6];
+	Matrix4x4 m_worldToViewTransform;
 	EffectDrawOrder::EffectDrawOrder_ m_drawOrder;
 	PrimitiveTypes::Float32 m_frameTime;
 	PrimitiveTypes::Float32 m_gameTime;

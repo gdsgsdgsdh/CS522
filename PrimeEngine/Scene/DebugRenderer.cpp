@@ -15,6 +15,7 @@
 #include "PrimeEngine/Events/StandardEvents.h"
 #include "PrimeEngine/Scene/MeshManager.h"
 #include "PrimeEngine/Scene/MeshInstance.h"
+#include <vector>
 
 const bool EnableDebugRendering = true;
 namespace PE {
@@ -321,6 +322,36 @@ void DebugRenderer::postPreDraw(int &threadOwnershipMask)
 		pLineMeshInstance->setEnabled(false);
 	}
 	vertexData.reset(0);
+}
+
+void DebugRenderer::drawAABB(Vector3 vertices[8], Matrix4x4 worldMatrix) {
+
+	std::vector<std::pair<Vector3, Vector3>> sides(12);
+
+	sides[0] = std::make_pair(vertices[0], vertices[1]);
+	sides[1] = std::make_pair(vertices[0], vertices[2]); 
+	sides[2] = std::make_pair(vertices[0], vertices[4]);
+	sides[3] = std::make_pair(vertices[1], vertices[3]); 
+	sides[4] = std::make_pair(vertices[1], vertices[5]); 
+	sides[5] = std::make_pair(vertices[2], vertices[3]);
+	sides[6] = std::make_pair(vertices[2], vertices[6]); 
+	sides[7] = std::make_pair(vertices[3], vertices[7]); 
+	sides[8] = std::make_pair(vertices[4], vertices[5]);
+	sides[9] = std::make_pair(vertices[4], vertices[6]);
+	sides[10] = std::make_pair(vertices[5], vertices[7]); 
+	sides[11] = std::make_pair(vertices[6], vertices[7]);
+
+
+	Vector3 color(1.0f, 0, 1.0f);
+
+	for (int i = 0; i < 12; ++i) {
+		Vector3 startPoint = worldMatrix * sides[i].first;
+		Vector3 endPoint = worldMatrix * sides[i].second;
+		Vector3 lineVec[] = {startPoint, color, endPoint, color };
+
+		DebugRenderer::Instance()->createLineMesh(false, worldMatrix, &lineVec[0].m_x, 2, 0);
+	}
+
 }
 
 }; // namespace Components

@@ -61,10 +61,40 @@ void CameraSceneNode::do_CALCULATE_TRANSFORMATIONS(Events::Event *pEvt)
 	m_viewToProjectedTransform = CameraOps::CreateProjectionMatrix(verticalFov, 
 		aspect,
 		m_near, m_far);
-	
+	initCameraViewBoundaryPlanes(0.20f * PrimitiveTypes::Constants::c_Pi_F32, aspect, m_near, m_far);
 	SceneNode::do_CALCULATE_TRANSFORMATIONS(pEvt);
-
+	
 }
 
+void CameraSceneNode::initCameraViewBoundaryPlanes(PrimitiveTypes::Float32 verticalFov, PrimitiveTypes::Float32 aspect, float m_near, float m_far) {
+	Matrix4x4 origin;
+	origin.loadIdentity();
+	origin.setPos(Vector3(0, 0, 0));	// use default position
+
+	// init 6 planes
+	for (auto& plane : m_cameraViewBoundaryPlanes) {
+		plane = Matrix4x4(origin);
+	}
+
+	// Near plane only move forward
+	m_cameraViewBoundaryPlanes[0].moveForward(m_near);
+
+	// Far plane move forward and trun 180°
+	m_cameraViewBoundaryPlanes[1].moveForward(m_far);
+	m_cameraViewBoundaryPlanes[1].turnLeft(PrimitiveTypes::Constants::c_Pi_F32);
+
+	
+	PrimitiveTypes::Float32 leftAndRightPlaneTurnAngle = 0.5f * (PrimitiveTypes::Constants::c_Pi_F32 - verticalFov);
+	// Left plane = camera plane's n turn right 90°- verticalFov / 2
+	m_cameraViewBoundaryPlanes[2].turnRight(leftAndRightPlaneTurnAngle);
+	// Right plane = camera plane's n turn left 90°- verticalFov / 2
+	m_cameraViewBoundaryPlanes[3].turnLeft(leftAndRightPlaneTurnAngle);
+
+	PrimitiveTypes::Float32 topAndBotPlaneTurnAngle = 0.5f * (PrimitiveTypes::Constants::c_Pi_F32 - verticalFov * aspect);
+	// Top plane = camera plane's n turn down 90°- horizontal / 2
+	m_cameraViewBoundaryPlanes[4].turnDown(topAndBotPlaneTurnAngle);
+	// Bot plane = camera plane's n turn down 90°- horizontal / 2
+	m_cameraViewBoundaryPlanes[5].turnUp(topAndBotPlaneTurnAngle);
+}
 }; // namespace Components
 }; // namespace PE
