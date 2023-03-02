@@ -4,6 +4,7 @@
 #include "PrimeEngine/Scene/SkeletonInstance.h"
 #include "PrimeEngine/Scene/MeshInstance.h"
 #include "PrimeEngine/Scene/RootSceneNode.h"
+#include "PrimeEngine/Events/Component.h"
 
 #include "SoldierNPC.h"
 #include "SoldierNPCAnimationSM.h"
@@ -60,8 +61,8 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	pMainSN->m_base.setU(pEvt->m_u);
 	pMainSN->m_base.setV(pEvt->m_v);
 	pMainSN->m_base.setN(pEvt->m_n);
-
-
+	StringOps::writeToString(pEvt->m_soldierName, m_name, 32);
+	m_base = pMainSN->m_base;
 	RootSceneNode::Instance()->addComponent(hSN);
 
 	// add the scene node as component of soldier without any handlers. this is just data driven way to locate scnenode for soldier's components
@@ -135,6 +136,7 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 
 			// add gun scene node to the skin
 			pSkelInst->addComponent(hMyGunSN);
+
 		}
 		#endif
 				
@@ -163,6 +165,12 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	StringOps::writeToString(pEvt->m_patrolWayPoint, pSoldierBehaviorSM->m_curPatrolWayPoint, 32);
 	pSoldierBehaviorSM->m_havePatrolWayPoint = StringOps::length(pSoldierBehaviorSM->m_curPatrolWayPoint) > 0;
 
+	StringOps::writeToString(pEvt->m_aimTarget, pSoldierBehaviorSM->m_aimTarget, 32);
+	pSoldierBehaviorSM->m_haveAimTarget = StringOps::length(pSoldierBehaviorSM->m_aimTarget) > 0;
+
+	StringOps::writeToString(pEvt->m_aimTarget, pSoldierMovementSM->m_aimTarget, 32);
+	// pSoldierMovementSM->m_haveAimTarget = StringOps::length(pSoldierMovementSM->m_aimTarget) > 0;
+
 	// start the soldier
 	pSoldierBehaviorSM->start();
 #endif
@@ -175,5 +183,16 @@ void SoldierNPC::addDefaultComponents()
 	// custom methods of this component
 }
 
+//SceneNode* SoldierNPC::getParentsSceneNode()
+//{
+//	PE::Handle hParent = getFirstParentByType<Component>();
+//	if (hParent.isValid())
+//	{
+//		// see if parent has scene node component
+//		return hParent.getObject<Component>()->getFirstComponent<SceneNode>();
+//
+//	}
+//	return NULL;
+//}
 }; // namespace Components
 }; // namespace CharacterControl

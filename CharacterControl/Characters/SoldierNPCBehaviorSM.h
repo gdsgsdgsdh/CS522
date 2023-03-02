@@ -44,7 +44,14 @@ struct SoldierNPCBehaviorSM : public PE::Components::Component
 
 	PE::Handle m_hMovementSM;
 
+	//////////////////////////////////////////////////////////////////////////
+	// utility
+	//////////////////////////////////////////////////////////////////////////
+	PE::Components::SceneNode *getParentsSceneNode();
+
 	bool m_havePatrolWayPoint;
+	bool m_haveAimTarget;
+	char m_aimTarget[32];
 	char m_curPatrolWayPoint[32];
 	States m_state;
 };

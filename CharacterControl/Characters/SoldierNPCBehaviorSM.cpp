@@ -89,6 +89,37 @@ void SoldierNPCBehaviorSM::do_SoldierNPCMovementSM_Event_TARGET_REACHED(PE::Even
 			{
 				m_state = IDLE;
 				// no need to send the event. movement state machine will automatically send event to animation state machine to play idle animation
+				// search for waypoint object
+				SoldierNPC* pWP = pGameObjectManagerAddon->getSoldierNPC(m_aimTarget);
+				if (pWP && StringOps::length(pWP->m_name) > 0) {
+					SceneNode* curpSN = getParentsSceneNode();
+					if (curpSN)
+					{
+						Vector3 curPos = curpSN->m_base.getPos();
+						Vector3 targetPostion = pWP->m_base.getPos();
+						float dsqr = (targetPostion - curPos).lengthSqr();
+						bool reached = true;
+						if (dsqr > 0.01f)
+						{
+							// not at the spot yet
+							Event_UPDATE* pRealEvt = (Event_UPDATE*)(pEvt);
+							static float speed = 1.4f;
+							float allowedDisp = speed * pRealEvt->m_frameTime;
+							Vector3 dir = (targetPostion - curPos);
+							dir.normalize();
+							float dist = sqrt(dsqr);
+							if (dist > allowedDisp)
+							{
+								dist = allowedDisp; // can move up to allowedDisp
+								reached = false; // not reaching destination yet
+							}
+							// instantaneous turn
+							curpSN->m_base.turnInDirection(dir, 3.1415f);
+							// curpSN->m_base.setPos(curPos + dir * dist);
+						}
+					}
+				}
+				 /*send event to aim at target*/
 			}
 		}
 	}
@@ -170,10 +201,22 @@ void SoldierNPCBehaviorSM::do_UPDATE(PE::Events::Event *pEvt)
 			h.release();
 		}
 	}
+	
 }
 
+SceneNode* SoldierNPCBehaviorSM::getParentsSceneNode()
+{
+	PE::Handle hParent = getFirstParentByType<Component>();
+	if (hParent.isValid())
+	{
+		// see if parent has scene node component
+		return hParent.getObject<Component>()->getFirstComponent<SceneNode>();
 
-}}
+	}
+	return NULL;
+}
+
+}};
 
 
 

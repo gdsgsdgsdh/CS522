@@ -55,7 +55,7 @@ project("CharacterControl-".._OPTIONS["platformapi"])
 		postbuildcommands { 'copy /Y ..\\External\\DownloadedLibraries\\Cg\\bin\\cg.dll "$(OutDir)" ' }
 		postbuildcommands { 'copy /Y ..\\External\\DownloadedLibraries\\Cg\\bin\\cgGL.dll "$(OutDir)" ' }
 		postbuildcommands { 'copy /Y ..\\External\\DownloadedLibraries\\Cg\\bin\\cgGL.dll "$(OutDir)" ' }
-		postbuildcommands { 'copy /Y "'..gWinDevKit..'\\bin\\x86\\d3dcompiler_46.dll" "$(OutDir)" ' }
+		postbuildcommands { 'copy /Y "Windows Kits\10\Redist\D3D\x86\d3dcompiler_47.dll" "$(OutDir)" ' }
 	end
 	
 	if (_OPTIONS["platformapi"] == "win32d3d11") then

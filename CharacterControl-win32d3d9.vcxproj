@@ -109,7 +109,7 @@ copy /Y "C:/Program Files (x86)/Windows Kits\10\Redist\D3D\x86\d3dcompiler_47.dl
       <Command>copy /Y ..\External\DownloadedLibraries\glew-1.9.0\bin\*.dll "$(OutDir)" 
 copy /Y ..\External\DownloadedLibraries\Cg\bin\cg.dll "$(OutDir)" 
 copy /Y ..\External\DownloadedLibraries\Cg\bin\cgGL.dll "$(OutDir)" 
-copy /Y "C:/Program Files (x86)/Windows Kits/8.0\bin\x86\d3dcompiler_46.dll" "$(OutDir)" </Command>
+copy /Y "C:/Program Files (x86)/Windows Kits\10\Redist\D3D\x86\d3dcompiler_47.dll" "$(OutDir)" </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -128,6 +128,7 @@ copy /Y "C:/Program Files (x86)/Windows Kits/8.0\bin\x86\d3dcompiler_46.dll" "$(
     <ClInclude Include="CharacterControl\ServerCharacterControlGame.h" />
     <ClInclude Include="CharacterControl\ServerGameObjectManagerAddon.h" />
     <ClInclude Include="CharacterControl\Tank\ClientTank.h" />
+    <ClInclude Include="CharacterControl\Target.h" />
     <ClInclude Include="CharacterControl\WayPoint.h" />
     <ClInclude Include="CharacterControl\test.h" />
     <ClInclude Include="CharacterControl\testfunc_c_stdcall.h" />
@@ -147,6 +148,7 @@ copy /Y "C:/Program Files (x86)/Windows Kits/8.0\bin\x86\d3dcompiler_46.dll" "$(
     <ClCompile Include="CharacterControl\ServerCharacterControlGame.cpp" />
     <ClCompile Include="CharacterControl\ServerGameObjectManagerAddon.cpp" />
     <ClCompile Include="CharacterControl\Tank\ClientTank.cpp" />
+    <ClCompile Include="CharacterControl\Target.cpp" />
     <ClCompile Include="CharacterControl\WayPoint.cpp" />
     <ClCompile Include="CharacterControl\main.cpp" />
   </ItemGroup>
@@ -164,6 +166,9 @@ copy /Y "C:/Program Files (x86)/Windows Kits/8.0\bin\x86\d3dcompiler_46.dll" "$(
     <ProjectReference Include="PrimeEngine-win32d3d9.vcxproj">
       <Project>{0C66E244-78D2-9D3F-41C6-359DADF1BFA7}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CharacterControl\Target.mm" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
