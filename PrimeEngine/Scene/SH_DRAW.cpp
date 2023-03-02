@@ -23,6 +23,7 @@
 #include "SceneNode.h"
 #include "RootSceneNode.h"
 #include "DrawList.h"
+#include "PhysicsComponent.h"
 #include "PrimeEngine/Scene/DefaultAnimationSM.h"
 #include "PrimeEngine/Geometry/IndexBufferCPU/IndexBufferCPU.h"
 
@@ -221,26 +222,27 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 		for (int iInst = 0; iInst < pMeshCaller->m_instances.m_size; ++iInst)
 		{
 			MeshInstance* pInst = pMeshCaller->m_instances[iInst].getObject<MeshInstance>();
-			// get word transform matrix
-			Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
-			if (!hParentSN.isValid()) {
-				hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
-			}
-			Matrix4x4 worldMatrix;
-			Vector3 m_pos;
-			if (hParentSN.isValid()) {
-				SceneNode* pSN = hParentSN.getObject<SceneNode>();
-				worldMatrix = pSN->m_worldTransform;
-				m_pos = pSN->m_base.getPos();
-			}
-			PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
-			Vector3 minPos = pPoss->minPos;
-			Vector3 maxPos = pPoss->maxPos;
-			Vector3 vertices[8];
-			MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
-			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
+			/// Move this creating AABB part to physicsComponent
+			//// get word transform matrix
+			//Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
+			//if (!hParentSN.isValid()) {
+			//	hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
+			//}
+			//Matrix4x4 worldMatrix;
+			//Vector3 m_pos;
+			//if (hParentSN.isValid()) {
+			//	SceneNode* pSN = hParentSN.getObject<SceneNode>();
+			//	worldMatrix = pSN->m_worldTransform;
+			//	m_pos = pSN->m_base.getPos();
+			//}
+			//PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+			//Vector3 minPos = pPoss->minPos;
+			//Vector3 maxPos = pPoss->maxPos;
+			//Vector3 vertices[8];
+			//MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
+			//DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
 
-			// Codes below are to check of obejcts in the camera view, if not, won't load.
+			/// Codes below are to check of obejcts in the camera view, if not, won't load.
 			/*if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
 			{
 				pInst->m_culledOut = false;
@@ -250,7 +252,7 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			{
 				pInst->m_culledOut = true;
 			}*/
-			
+			PhysicsComponent::createAABB(pInst, pMeshCaller);
 			// Display all objects
 			pInst->m_culledOut = false;
 			++pMeshCaller->m_numVisibleInstances;
