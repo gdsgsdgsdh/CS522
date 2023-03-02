@@ -132,6 +132,7 @@ copy /Y "C:/Program Files (x86)/Windows Kits\10\Redist\D3D\x86\d3dcompiler_47.dl
     <ClInclude Include="CharacterControl\WayPoint.h" />
     <ClInclude Include="CharacterControl\test.h" />
     <ClInclude Include="CharacterControl\testfunc_c_stdcall.h" />
+    <ClInclude Include="PhysicsComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterControl\Characters\SoldierNPC.cpp" />
@@ -151,6 +152,7 @@ copy /Y "C:/Program Files (x86)/Windows Kits\10\Redist\D3D\x86\d3dcompiler_47.dl
     <ClCompile Include="CharacterControl\Target.cpp" />
     <ClCompile Include="CharacterControl\WayPoint.cpp" />
     <ClCompile Include="CharacterControl\main.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Masm Include="CharacterControl\test.asm" />

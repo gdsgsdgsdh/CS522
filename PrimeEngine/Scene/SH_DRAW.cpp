@@ -239,7 +239,9 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			Vector3 vertices[8];
 			MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
 			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
-			if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
+
+			// Codes below are to check of obejcts in the camera view, if not, won't load.
+			/*if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
 			{
 				pInst->m_culledOut = false;
 				++pMeshCaller->m_numVisibleInstances;
@@ -247,8 +249,11 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			else
 			{
 				pInst->m_culledOut = true;
-			}
+			}*/
 			
+			// Display all objects
+			pInst->m_culledOut = false;
+			++pMeshCaller->m_numVisibleInstances;
 
 		}
 	}
