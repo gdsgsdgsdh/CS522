@@ -8,19 +8,27 @@
 namespace PE {
 	namespace Components {
 
-		PE_IMPLEMENT_CLASS1(PhysicsComponent, Component);
 		// Constructor -------------------------------------------------------------
-		PhysicsComponent::PhysicsComponent(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself) : Component(context, arena, hMyself) 
-		{
-
+		PhysicsComponent::PhysicsComponent(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself) : Component (context, arena, hMyself) {
 
 		}
 
 
 		// Component ------------------------------------------------------------
+		void PhysicsComponent::addDefaultComponents()
+		{
+			/*SceneNode::addDefaultComponents();*/
+
+
+			// Data components
+
+			// event handlers
+			/*PE_REGISTER_EVENT_HANDLER(Events::Event_MOVE, SceneNode::do_MOVE);
+			PE_REGISTER_EVENT_HANDLER(Events::Event_CALCULATE_TRANSFORMATIONS, SceneNode::do_CALCULATE_TRANSFORMATIONS);*/
+
+		}
 
 		void PhysicsComponent::createAABB(MeshInstance* pInst, Mesh* pMeshCaller) {
-
 			Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
 			if (!hParentSN.isValid()) {
 				hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
@@ -36,24 +44,15 @@ namespace PE {
 			Vector3 minPos = pPoss->minPos;
 			Vector3 maxPos = pPoss->maxPos;
 			Vector3 vertices[8];
-			AABBHelpers::generateVertexForAABB(minPos, maxPos, vertices);
+			generateVertexForAABB(minPos, maxPos, vertices);
 			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
 
 		}
 
 
-		void PhysicsComponent::addDefaultComponents() {
-			Component::addDefaultComponents();
 
 
-			// Data components
-
-			// event handlers
-			/*PE_REGISTER_EVENT_HANDLER(Events::Event_MOVE, SceneNode::do_MOVE);
-			PE_REGISTER_EVENT_HANDLER(Events::Event_CALCULATE_TRANSFORMATIONS, SceneNode::do_CALCULATE_TRANSFORMATIONS);*/
-		}
-
-		void AABBHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]) {
+		void PhysicsComponent::generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]) {
 
 			vertices[0] = Vector3(min.m_x, min.m_y, min.m_z);
 			vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);

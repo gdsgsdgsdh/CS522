@@ -1116,6 +1116,9 @@
     <ClInclude Include="PrimeEngine\Scene\PhysicsComponent.h">
       <Filter>PrimeEngine\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="PrimeEngine\Scene\PhysicsManager.h">
+      <Filter>PrimeEngine\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\AssetsOut\Default\GPUPrograms\nums_spe.c">
@@ -1548,6 +1551,9 @@
       <Filter>PrimeEngine\Utils</Filter>
     </ClCompile>
     <ClCompile Include="PrimeEngine\Scene\PhysicsComponent.cpp">
+      <Filter>PrimeEngine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="PrimeEngine\Scene\PhysicsManager.cpp">
       <Filter>PrimeEngine\Scene</Filter>
     </ClCompile>
   </ItemGroup>

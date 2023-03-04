@@ -191,6 +191,22 @@ bool SingleHandler_DRAW::check_Object_In_Camera_View(Vector3 vertices[8], Matrix
 	return true;
 }
 
+//PhysicsComponent* SingleHandler_DRAW::getParentsPhysicsComponent()
+//{
+//	//PE::Handle hParent = getFirstParentByType<Component>();
+//	//if (hParent.isValid())
+//	//{
+//	//	// see if parent has scene node component
+//	//	hParent = hParent.getObject<Component>()->getFirstComponent<SceneNode>();
+//	//	if (hParent.isValid())
+//	//	{
+//	//		// see if parent has scene node component
+//	//		return hParent.getObject<SceneNode>()->getFirstComponent<PhysicsComponent>();
+//	//	}
+//	//}
+//	return NULL;
+//}
+
 void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 {
 	// the mesh is who we are drawing for is previous distributor
@@ -224,23 +240,23 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			MeshInstance* pInst = pMeshCaller->m_instances[iInst].getObject<MeshInstance>();
 			/// Move this creating AABB part to physicsComponent
 			//// get word transform matrix
-			//Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
-			//if (!hParentSN.isValid()) {
-			//	hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
-			//}
-			//Matrix4x4 worldMatrix;
-			//Vector3 m_pos;
-			//if (hParentSN.isValid()) {
-			//	SceneNode* pSN = hParentSN.getObject<SceneNode>();
-			//	worldMatrix = pSN->m_worldTransform;
-			//	m_pos = pSN->m_base.getPos();
-			//}
-			//PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
-			//Vector3 minPos = pPoss->minPos;
-			//Vector3 maxPos = pPoss->maxPos;
-			//Vector3 vertices[8];
-			//MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
-			//DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);
+			/*Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
+			if (!hParentSN.isValid()) {
+				hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
+			}
+			Matrix4x4 worldMatrix;
+			Vector3 m_pos;
+			if (hParentSN.isValid()) {
+				SceneNode* pSN = hParentSN.getObject<SceneNode>();
+				worldMatrix = pSN->m_worldTransform;
+				m_pos = pSN->m_base.getPos();
+			}
+			PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+			Vector3 minPos = pPoss->minPos;
+			Vector3 maxPos = pPoss->maxPos;
+			Vector3 vertices[8];
+			MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
+			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);*/
 
 			/// Codes below are to check of obejcts in the camera view, if not, won't load.
 			/*if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
@@ -252,7 +268,8 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			{
 				pInst->m_culledOut = true;
 			}*/
-			PhysicsComponent::createAABB(pInst, pMeshCaller);
+			// PhysicsComponent *pPC = getParentsPhysicsComponent();
+			// pPC->createAABB(pInst, pMeshCaller);
 			// Display all objects
 			pInst->m_culledOut = false;
 			++pMeshCaller->m_numVisibleInstances;

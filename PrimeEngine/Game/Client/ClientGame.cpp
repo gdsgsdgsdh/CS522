@@ -7,6 +7,7 @@
 #include "PrimeEngine/GameThreadJob.h"
 #include "PrimeEngine/Application/Application.h"
 #include "PrimeEngine/APIAbstraction/Effect/PEDepthStencilState.h"
+#include "PrimeEngine/Scene/PhysicsManager.h"
 
 #if APIABSTRACTION_PS3
 #include <cell/sysmodule.h>
@@ -207,6 +208,7 @@ namespace Components {
     DrawList::Construct(context, MemoryArena_Client);
     
     RootSceneNode::Construct(context, MemoryArena_Client);
+	PhysicsManager::Construct(context, MemoryArena_Client);
 	DebugRenderer::Construct(context, MemoryArena_Client);
 	CameraManager::Construct(context, MemoryArena_Client);
     

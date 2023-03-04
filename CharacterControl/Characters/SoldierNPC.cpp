@@ -56,6 +56,14 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	PE::Handle hSN("SCENE_NODE", sizeof(SceneNode));
 	SceneNode *pMainSN = new(hSN) SceneNode(*m_pContext, m_arena, hSN);
 	pMainSN->addDefaultComponents();
+		
+	Component* pCaller = pEvt->m_prevDistributor.getObject<Component>();
+	Mesh* pMeshCaller = (Mesh*)pCaller;
+
+
+	PE::Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+	PhysicsComponent* pMainPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+	pMainPC->addDefaultComponents();
 
 	pMainSN->m_base.setPos(pEvt->m_pos);
 	pMainSN->m_base.setU(pEvt->m_u);

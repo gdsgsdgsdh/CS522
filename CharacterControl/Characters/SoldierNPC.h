@@ -3,6 +3,7 @@
 
 #include "PrimeEngine/Events/Component.h"
 #include "PrimeEngine/Scene/SceneNode.h"
+#include "PrimeEngine/Scene/PhysicsComponent.h"
 
 
 #include "../Events/Events.h"

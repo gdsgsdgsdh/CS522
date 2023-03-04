@@ -13,30 +13,23 @@
 #include "MeshInstance.h"
 #include "PrimeEngine/MemoryManagement/Handle.h"
 #include "PrimeEngine/PrimitiveTypes/PrimitiveTypes.h"
-
+#include "SceneNode.h"
 
 namespace PE {
 	namespace Components {
 		struct PhysicsComponent : public Component
 		{
-			PE_DECLARE_CLASS(PhysicsComponent);
 			// Constructor -------------------------------------------------------------
 			PhysicsComponent(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself);
 
 			virtual ~PhysicsComponent() {}
 
 			// Component ------------------------------------------------------------
-
-			static void createAABB(MeshInstance* pInst, Mesh* pMeshCaller);
-
-			virtual void addDefaultComponents();
+			void addDefaultComponents();
+			void createAABB(MeshInstance* pInst, Mesh* pMeshCaller);
+			void generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]);
 
 			// Individual events -------------------------------------------------------
-		};
-
-		struct AABBHelpers
-		{
-			static void generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]);
 		};
 		
 	}

@@ -13,6 +13,7 @@
 #include "../Events/Component.h"
 #include "../Events/StandardEvents.h"
 #include "../Utils/Array/Array.h"
+#include "PhysicsComponent.h"
 
 struct IndexRange;
 
@@ -53,7 +54,7 @@ struct SingleHandler_DRAW : public Component
 
 private:
 	bool check_Object_In_Camera_View(Vector3 vertices[8], Matrix4x4 m_worldToViewTransform, Matrix4x4 m_cameraViewBoundaryPlanes[6], Matrix4x4 worldMatrix);
-
+	PhysicsComponent* getParentsPhysicsComponent();
 	void gatherDrawCallsForRange(Mesh *pMeshCaller, DrawList *pDrawList, PE::Handle *pHVBs, int vbCount, Vector4 &vbWeights, int iRange,
 		Events::Event_GATHER_DRAWCALLS *pDrawEvent, Events::Event_GATHER_DRAWCALLS_Z_ONLY *pZOnlyDrawEvent
 	);

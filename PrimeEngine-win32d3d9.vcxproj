@@ -236,6 +236,7 @@
     <ClInclude Include="PrimeEngine\Scene\MeshInstance.h" />
     <ClInclude Include="PrimeEngine\Scene\MeshManager.h" />
     <ClInclude Include="PrimeEngine\Scene\PhysicsComponent.h" />
+    <ClInclude Include="PrimeEngine\Scene\PhysicsManager.h" />
     <ClInclude Include="PrimeEngine\Scene\RootSceneNode.h" />
     <ClInclude Include="PrimeEngine\Scene\SH_DRAW.h" />
     <ClInclude Include="PrimeEngine\Scene\SceneNode.h" />
@@ -390,6 +391,7 @@
     <ClCompile Include="PrimeEngine\Scene\MeshInstance.cpp" />
     <ClCompile Include="PrimeEngine\Scene\MeshManager.cpp" />
     <ClCompile Include="PrimeEngine\Scene\PhysicsComponent.cpp" />
+    <ClCompile Include="PrimeEngine\Scene\PhysicsManager.cpp" />
     <ClCompile Include="PrimeEngine\Scene\RootSceneNode.cpp" />
     <ClCompile Include="PrimeEngine\Scene\SH_DRAW.cpp" />
     <ClCompile Include="PrimeEngine\Scene\SceneNode.cpp" />
