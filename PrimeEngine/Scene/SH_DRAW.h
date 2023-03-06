@@ -162,7 +162,7 @@ struct MeshHelpers
 	static void analyzeTechniqueSequences(Mesh *pObj,
 	PrimitiveTypes::UInt32 &numRanges,
 	PrimitiveTypes::UInt32 &numFullSequences);
-	static void generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]);
+	static std::vector<std::pair<Vector3, Vector3>> generateVertexForAABB(const Vector3& min, const Vector3& max);
 	static void pushEffects(Mesh *pObj);
 	static void popEffects(Mesh *pObj);
 	static void setPixelShadersOfTopEffects(PE::GameContext &context, PE::MemoryArena arena, Mesh *pObj);

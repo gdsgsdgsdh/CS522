@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 // API Abstraction
 #include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
 
@@ -15,21 +17,25 @@
 #include "PrimeEngine/PrimitiveTypes/PrimitiveTypes.h"
 #include "SceneNode.h"
 
+
 namespace PE {
 	namespace Components {
 		struct PhysicsComponent : public Component
 		{
+			PE_DECLARE_CLASS(PhysicsComponent);
 			// Constructor -------------------------------------------------------------
 			PhysicsComponent(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself);
 
 			virtual ~PhysicsComponent() {}
 
 			// Component ------------------------------------------------------------
-			void addDefaultComponents();
-			void createAABB(MeshInstance* pInst, Mesh* pMeshCaller);
-			void generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]);
+			virtual void addDefaultComponents();
+			void createAABB();
 
 			// Individual events -------------------------------------------------------
+			void setVerticesForAABB(std::vector<std::pair<Vector3, Vector3>> sides);
+		private:
+			std::vector<std::pair<Vector3, Vector3>> sides;
 		};
 		
 	}

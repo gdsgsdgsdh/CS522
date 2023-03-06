@@ -1,5 +1,5 @@
 #include "SH_DRAW.h"
-
+#include <vector>
 // API Abstraction
 #include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
 
@@ -16,6 +16,7 @@
 #include "PrimeEngine/Lua/LuaEnvironment.h"
 #include "Light.h"
 #include "PrimeEngine/Render/ShaderActions/SetPerObjectConstantsShaderAction.h"
+#include "CharacterControl/Characters/SoldierNPC.h"
 // Sibling/Children includes
 #include "Mesh.h"
 #include "MeshInstance.h"
@@ -24,6 +25,7 @@
 #include "RootSceneNode.h"
 #include "DrawList.h"
 #include "PhysicsComponent.h"
+#include "PhysicsManager.h"
 #include "PrimeEngine/Scene/DefaultAnimationSM.h"
 #include "PrimeEngine/Geometry/IndexBufferCPU/IndexBufferCPU.h"
 
@@ -175,6 +177,35 @@ void MeshHelpers::setZOnlyEffectOfTopEffectSecuence(Mesh *pObj, Handle hNewEffec
 	}
 }
 
+std::vector<std::pair<Vector3, Vector3>> MeshHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max) {
+	Vector3 vertices[8];
+	vertices[0] = Vector3(min.m_x, min.m_y, min.m_z);
+	vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);
+	vertices[2] = Vector3(min.m_x, max.m_y, min.m_z);
+	vertices[3] = Vector3(min.m_x, max.m_y, max.m_z);
+	vertices[4] = Vector3(max.m_x, min.m_y, min.m_z);
+	vertices[5] = Vector3(max.m_x, min.m_y, max.m_z);
+	vertices[6] = Vector3(max.m_x, max.m_y, min.m_z);
+	vertices[7] = Vector3(max.m_x, max.m_y, max.m_z);
+
+	std::vector<std::pair<Vector3, Vector3>> sides(12);
+
+	sides[0] = std::make_pair(vertices[0], vertices[1]);
+	sides[1] = std::make_pair(vertices[0], vertices[2]);
+	sides[2] = std::make_pair(vertices[0], vertices[4]);
+	sides[3] = std::make_pair(vertices[1], vertices[3]);
+	sides[4] = std::make_pair(vertices[1], vertices[5]);
+	sides[5] = std::make_pair(vertices[2], vertices[3]);
+	sides[6] = std::make_pair(vertices[2], vertices[6]);
+	sides[7] = std::make_pair(vertices[3], vertices[7]);
+	sides[8] = std::make_pair(vertices[4], vertices[5]);
+	sides[9] = std::make_pair(vertices[4], vertices[6]);
+	sides[10] = std::make_pair(vertices[5], vertices[7]);
+	sides[11] = std::make_pair(vertices[6], vertices[7]);
+
+	return sides;
+}
+
 PE_IMPLEMENT_SINGLETON_CLASS1(SingleHandler_DRAW, Component);
 
 
@@ -240,23 +271,39 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			MeshInstance* pInst = pMeshCaller->m_instances[iInst].getObject<MeshInstance>();
 			/// Move this creating AABB part to physicsComponent
 			//// get word transform matrix
-			/*Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
+			Handle hParentSN = pInst->getFirstParentByType<SceneNode>();
 			if (!hParentSN.isValid()) {
 				hParentSN = pInst->getFirstParentByTypePtr<SkeletonInstance>()->getFirstParentByType<SceneNode>();
 			}
 			Matrix4x4 worldMatrix;
 			Vector3 m_pos;
+			
 			if (hParentSN.isValid()) {
 				SceneNode* pSN = hParentSN.getObject<SceneNode>();
-				worldMatrix = pSN->m_worldTransform;
+				PhysicsComponent* pPC = pSN->getFirstComponent<PhysicsComponent>();
+				Handle pPC1 = pSN->getFirstParentByType<CharacterControl::Components::SoldierNPC>();
+				worldMatrix = pSN->m_worldTransform; 
 				m_pos = pSN->m_base.getPos();
+				PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+				Vector3 minPos = pPoss->minPos;
+				Vector3 maxPos = pPoss->maxPos;
+
+				std::vector<std::pair<Vector3, Vector3>> sides = MeshHelpers::generateVertexForAABB(minPos, maxPos);
+				if (pPC == NULL) {
+					// Add PhysicsComponent
+					Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+					PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+					pPC->addDefaultComponents();
+					PhysicsManager::Instance()->addComponent(hPC);
+					pSN->addComponent(hPC);
+				}
+				pPC->setVerticesForAABB(sides);
+
+				if (pPC != NULL) {
+					DebugRenderer::Instance()->drawAABB(sides, worldMatrix);
+				}
 			}
-			PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
-			Vector3 minPos = pPoss->minPos;
-			Vector3 maxPos = pPoss->maxPos;
-			Vector3 vertices[8];
-			MeshHelpers::generateVertexForAABB(minPos, maxPos, vertices);
-			DebugRenderer::Instance()->drawAABB(vertices, worldMatrix);*/
+			 
 
 			/// Codes below are to check of obejcts in the camera view, if not, won't load.
 			/*if (check_Object_In_Camera_View(vertices, m_worldToViewTransform, m_cameraViewBoundaryPlanes, worldMatrix))
@@ -370,18 +417,7 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 	}
 }
 
-void MeshHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max, Vector3 vertices[8]) {
 
-	vertices[0] = Vector3(min.m_x, min.m_y, min.m_z); 
-	vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);
-	vertices[2] = Vector3(min.m_x, max.m_y, min.m_z); 
-	vertices[3] = Vector3(min.m_x, max.m_y, max.m_z);
-	vertices[4] = Vector3(max.m_x, min.m_y, min.m_z); 
-	vertices[5] = Vector3(max.m_x, min.m_y, max.m_z);
-	vertices[6] = Vector3(max.m_x, max.m_y, min.m_z); 
-	vertices[7] = Vector3(max.m_x, max.m_y, max.m_z);
-
-}
 
 void SingleHandler_DRAW::gatherDrawCallsForRange(Mesh *pMeshCaller, DrawList *pDrawList,  PE::Handle *pHVBs, int vbCount, Vector4 &vbWeights, 
 		int iRange,

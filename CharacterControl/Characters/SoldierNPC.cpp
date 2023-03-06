@@ -4,6 +4,7 @@
 #include "PrimeEngine/Scene/SkeletonInstance.h"
 #include "PrimeEngine/Scene/MeshInstance.h"
 #include "PrimeEngine/Scene/RootSceneNode.h"
+#include "PrimeEngine/Scene/PhysicsManager.h"
 #include "PrimeEngine/Events/Component.h"
 
 #include "SoldierNPC.h"
@@ -55,15 +56,8 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	
 	PE::Handle hSN("SCENE_NODE", sizeof(SceneNode));
 	SceneNode *pMainSN = new(hSN) SceneNode(*m_pContext, m_arena, hSN);
-	pMainSN->addDefaultComponents();
-		
-	Component* pCaller = pEvt->m_prevDistributor.getObject<Component>();
-	Mesh* pMeshCaller = (Mesh*)pCaller;
-
-
-	PE::Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
-	PhysicsComponent* pMainPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
-	pMainPC->addDefaultComponents();
+	pMainSN->addDefaultComponents();	
+	 
 
 	pMainSN->m_base.setPos(pEvt->m_pos);
 	pMainSN->m_base.setU(pEvt->m_u);
@@ -72,6 +66,13 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	StringOps::writeToString(pEvt->m_soldierName, m_name, 32);
 	m_base = pMainSN->m_base;
 	RootSceneNode::Instance()->addComponent(hSN);
+
+	//// Add PhysicsComponent
+	//PE::Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+	//PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+	//pPC->addDefaultComponents();
+	//PhysicsManager::Instance()->addComponent(hPC);
+	//pMainSN->addComponent(hPC);
 
 	// add the scene node as component of soldier without any handlers. this is just data driven way to locate scnenode for soldier's components
 	{

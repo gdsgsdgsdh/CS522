@@ -13,6 +13,8 @@
 #include "PrimeEngine/Scene/Skeleton.h"
 #include "PrimeEngine/Scene/MeshInstance.h"
 #include "PrimeEngine/Scene/SkeletonInstance.h"
+#include "PrimeEngine/Scene/PhysicsComponent.h"
+#include "PrimeEngine/Scene/PhysicsManager.h"
 
 namespace PE {
 namespace Components {
@@ -326,6 +328,13 @@ void GameObjectManager::do_CREATE_MESH(Events::Event *pEvt)
 				pSN->m_base.setU(pRealEvent->m_u);
 				pSN->m_base.setV(pRealEvent->m_v);
 				pSN->m_base.setN(pRealEvent->m_n);
+
+				// Add PhysicsComponent
+				Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+				PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+				pPC->addDefaultComponents();
+				PhysicsManager::Instance()->addComponent(hPC);
+				pSN->addComponent(hPC);
 			}
 			else
 			{
@@ -353,7 +362,20 @@ void GameObjectManager::do_CREATE_MESH(Events::Event *pEvt)
 				pSN->m_base.setU(pRealEvent->m_u);
 				pSN->m_base.setV(pRealEvent->m_v);
 				pSN->m_base.setN(pRealEvent->m_n);
+
+				// Check if have physicsComponent
+				Handle hPC = pSN->getFirstComponent<PhysicsComponent>();
+				if (!hPC.isValid()) {
+					// Add PhysicsComponent
+					Handle NewhPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+					PhysicsComponent* pPC = new(NewhPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+					pPC->addDefaultComponents();
+					PhysicsManager::Instance()->addComponent(NewhPC);
+					pSN->addComponent(NewhPC);
+				}
 			}
+
+			
 		}
 	}
 

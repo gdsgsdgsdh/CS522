@@ -26,7 +26,7 @@ namespace PE {
 		
 
 		void PhysicsManager::addDefaultComponents() {
-			PhysicsComponent::addDefaultComponents();
+			Component::addDefaultComponents();
 
 			//PE_REGISTER_EVENT_HANDLER(Events::Event_GATHER_DRAWCALLS, RootSceneNode::do_GATHER_DRAWCALLS);
 			//PE_REGISTER_EVENT_HANDLER(Events::Event_GATHER_DRAWCALLS_Z_ONLY, RootSceneNode::do_GATHER_DRAWCALLS);

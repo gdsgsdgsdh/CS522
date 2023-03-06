@@ -15,14 +15,14 @@
 
 namespace PE {
 	namespace Components {
-		struct PhysicsManager : public PhysicsComponent
+		struct PhysicsManager : public Component
 		{
 			PE_DECLARE_CLASS(PhysicsManager);
 
 			static void Construct(PE::GameContext& context, PE::MemoryArena arena);
 
 			// Constructor -------------------------------------------------------------
-			PhysicsManager(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself) : PhysicsComponent(context, arena, hMyself) {
+			PhysicsManager(PE::GameContext& context, PE::MemoryArena arena, Handle hMyself) : Component(context, arena, hMyself) {
 				m_components.reset(512);
 			}
 

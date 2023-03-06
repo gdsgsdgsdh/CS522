@@ -1,6 +1,7 @@
 #ifndef __PYENGINE_2_0_DEBUGRENDERER_H__
 #define __PYENGINE_2_0_DEBUGRENDERER_H__
 
+#include<vector>
 #define NOMINMAX
 // API Abstraction
 #include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
@@ -63,7 +64,7 @@ struct DebugRenderer : public SceneNode
 	virtual void addDefaultComponents();
 	// Individual events -------------------------------------------------------
 
-	void drawAABB(Vector3 vertices[8], Matrix4x4 worldMatrix);
+	void drawAABB(std::vector<std::pair<Vector3, Vector3>> sides, Matrix4x4 worldMatrix);
 	// Develop 12 sides from 8 vertex and draw AABB ----------------------------
 
 	private:

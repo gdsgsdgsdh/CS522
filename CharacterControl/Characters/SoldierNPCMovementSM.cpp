@@ -1,5 +1,6 @@
 #include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
 
+#include "PrimeEngine/MemoryManagement/Handle.h"
 #include "PrimeEngine/Lua/LuaEnvironment.h"
 #include "../ClientGameObjectManagerAddon.h"
 #include "../CharacterControlContext.h"
@@ -92,8 +93,17 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 {
 	if (m_state == WALKING_TO_TARGET)
 	{
+		
 		// see if parent has scene node component
+		
 		SceneNode *pSN = getParentsSceneNode();
+		PhysicsComponent *pPC = pSN->getFirstComponent<PhysicsComponent>();
+		if (pPC) {
+			pPC->createAABB();
+		}
+		
+		/*Handle *hPC = pSN->getComponent<SceneNode>();*/
+		/*PhysicsComponent *pPC = pSN->getCompi*/
 		if (pSN)
 		{
 			Vector3 curPos = pSN->m_base.getPos();

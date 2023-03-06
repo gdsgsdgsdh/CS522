@@ -152,7 +152,6 @@ void ClientGameObjectManagerAddon::createTank(int index, int &threadOwnershipMas
 	pSN->m_base.setPos(spawnPos);
 	
 	pSN->addComponent(hMeshInstance);
-
 	RootSceneNode::Instance()->addComponent(hSN);
 
 	// now add game objects

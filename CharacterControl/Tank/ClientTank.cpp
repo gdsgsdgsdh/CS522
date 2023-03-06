@@ -5,6 +5,7 @@
 #include "PrimeEngine/Events/StandardEvents.h"
 #include "PrimeEngine/Scene/Mesh.h"
 #include "PrimeEngine/Scene/SceneNode.h"
+#include "PrimeEngine/Scene/PhysicsComponent.h"
 #include "PrimeEngine/Networking/EventManager.h"
 #include "PrimeEngine/Networking/Client/ClientNetworkManager.h"
 #include "CharacterControl/Events/Events.h"
@@ -388,6 +389,7 @@ void TankController::do_UPDATE(PE::Events::Event *pEvt)
 		m_networkPingTimer += pRealEvt->m_frameTime;
 	}
 
+
 	PE::Handle hFisrtSN = getFirstComponentHandle<SceneNode>();
 	if (!hFisrtSN.isValid())
 	{
@@ -396,6 +398,12 @@ void TankController::do_UPDATE(PE::Events::Event *pEvt)
 	}
 
 	SceneNode *pFirstSN = hFisrtSN.getObject<SceneNode>();
+
+	PhysicsComponent* pPC = pFirstSN->getFirstComponent<PhysicsComponent>();
+	if (pPC) {
+		pPC->createAABB();
+	}
+
 
 	static float x = 0.0f;
 	static float y = 6.0f;

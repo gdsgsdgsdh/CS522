@@ -80,6 +80,8 @@
 #include "PrimeEngine/Events/StandardEvents.h"
 
 #include "Scene/SceneNode.h"
+#include "Scene/PhysicsManager.h"
+#include "Scene/PhysicsComponent.h"
 #include "PrimeEngine/Utils/StringOps.h"
 #include "PrimeEngine/Math/CameraOps.h"
 #include "PrimeEngine/APIAbstraction/Texture/GPUTextureManager.h"

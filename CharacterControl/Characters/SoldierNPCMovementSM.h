@@ -1,9 +1,11 @@
 #ifndef _PE_SOLDIER_NPC_MOVEMENT_SM_H_
 #define _PE_SOLDIER_NPC_MOVEMENT_SM_H_
 
-
+#include "PrimeEngine/APIAbstraction/APIAbstractionDefines.h"
+#include "PrimeEngine/MemoryManagement/Handle.h"
 #include "PrimeEngine/Events/Component.h"
 #include "PrimeEngine/Scene/SceneNode.h"
+#include "PrimeEngine/Scene/RootSceneNode.h"
 
 #include "../Events/Events.h"
 
@@ -58,7 +60,6 @@ struct SoldierNPCMovementSM : public PE::Components::Component
 	// utility
 	//////////////////////////////////////////////////////////////////////////
 	PE::Components::SceneNode *getParentsSceneNode();
-
 	//////////////////////////////////////////////////////////////////////////
 	// Component API and Event Handlers
 	//////////////////////////////////////////////////////////////////////////
