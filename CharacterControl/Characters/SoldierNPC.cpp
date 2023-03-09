@@ -67,12 +67,12 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 	m_base = pMainSN->m_base;
 	RootSceneNode::Instance()->addComponent(hSN);
 
-	//// Add PhysicsComponent
-	//PE::Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
-	//PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
-	//pPC->addDefaultComponents();
-	//PhysicsManager::Instance()->addComponent(hPC);
-	//pMainSN->addComponent(hPC);
+	// Add PhysicsComponent
+	PE::Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
+	PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
+	pPC->addDefaultComponents();
+	PhysicsManager::Instance()->addComponent(hPC);
+	pMainSN->addComponent(hPC);
 
 	// add the scene node as component of soldier without any handlers. this is just data driven way to locate scnenode for soldier's components
 	{
@@ -118,7 +118,8 @@ SoldierNPC::SoldierNPC(PE::GameContext &context, PE::MemoryArena arena, PE::Hand
 		PE::Handle hMeshInstance("MeshInstance", sizeof(MeshInstance));
 		MeshInstance *pMeshInstance = new(hMeshInstance) MeshInstance(*m_pContext, m_arena, hMeshInstance);
 		pMeshInstance->addDefaultComponents();
-		
+
+		pMeshInstance->addComponent(hPC);
 		pMeshInstance->initFromFile(pEvt->m_meshFilename, pEvt->m_package, pEvt->m_threadOwnershipMask);
 		
 		pSkelInst->addComponent(hMeshInstance);

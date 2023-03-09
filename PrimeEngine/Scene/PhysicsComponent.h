@@ -37,7 +37,5 @@ namespace PE {
 		private:
 			std::vector<std::pair<Vector3, Vector3>> sides;
 		};
-		
 	}
-
 }

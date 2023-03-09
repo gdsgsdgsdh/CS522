@@ -335,6 +335,11 @@ void GameObjectManager::do_CREATE_MESH(Events::Event *pEvt)
 				pPC->addDefaultComponents();
 				PhysicsManager::Instance()->addComponent(hPC);
 				pSN->addComponent(hPC);
+				pMeshInstance->addComponent(hPC);
+				Mesh* pM = pMeshInstance->getFirstParentByType<Mesh>().getObject<Mesh>();
+				PositionBufferCPU* pPoss = pM->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+				Matrix4x4 worldMatrix = pSN->m_worldTransform;
+				// PhysicsManager::Instance()->addObjectPosition(worldMatrix * pPoss->minPos, worldMatrix * pPoss->maxPos);
 			}
 			else
 			{

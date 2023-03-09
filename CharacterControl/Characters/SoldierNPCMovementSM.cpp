@@ -50,6 +50,25 @@ SceneNode* SoldierNPCMovementSM::getParentsSceneNode()
 	return NULL;
 }
 
+std::vector<Vector3> SoldierNPCMovementSM::MovementHelper::generateVertexForAABB(const Vector3 & min, const Vector3 & max) {
+	std::vector<Vector3> vertices(8);
+	vertices[0] = Vector3(min.m_x, min.m_y, min.m_z);
+	vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);
+	vertices[2] = Vector3(min.m_x, max.m_y, min.m_z);
+	vertices[3] = Vector3(min.m_x, max.m_y, max.m_z);
+	vertices[4] = Vector3(max.m_x, min.m_y, min.m_z);
+	vertices[5] = Vector3(max.m_x, min.m_y, max.m_z);
+	vertices[6] = Vector3(max.m_x, max.m_y, min.m_z);
+	vertices[7] = Vector3(max.m_x, max.m_y, max.m_z);
+	return vertices;
+}
+
+void SoldierNPCMovementSM::MovementHelper::transformVerticesToWorldTrans(std::vector<Vector3>& vertices, Matrix4x4 worldTrans) {
+	for (auto& vertice : vertices) {
+		vertice = worldTrans * vertice;
+	}
+	return;
+}
 void SoldierNPCMovementSM::addDefaultComponents()
 {
 	Component::addDefaultComponents();
@@ -97,11 +116,11 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 		// see if parent has scene node component
 		
 		SceneNode *pSN = getParentsSceneNode();
-		PhysicsComponent *pPC = pSN->getFirstComponent<PhysicsComponent>();
-		if (pPC) {
-			pPC->createAABB();
-		}
-		
+		PhysicsComponent* pPC = pSN->getFirstComponent<PhysicsComponent>();
+		MeshInstance* pMI = pPC->getFirstParentByType<MeshInstance>().getObject<MeshInstance>();
+		Mesh* pM = pMI->getFirstParentByType<Mesh>().getObject<Mesh>();
+		PhysicsManager* pPM = pPC->getFirstParentByType<PhysicsManager>().getObject<PhysicsManager>();
+
 		/*Handle *hPC = pSN->getComponent<SceneNode>();*/
 		/*PhysicsComponent *pPC = pSN->getCompi*/
 		if (pSN)
@@ -113,7 +132,7 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 			if (dsqr > 0.01f)
 			{
 				// not at the spot yet
-				Event_UPDATE *pRealEvt = (Event_UPDATE *)(pEvt);
+				Event_UPDATE* pRealEvt = (Event_UPDATE*)(pEvt);
 				static float speed = 1.4f;
 				float allowedDisp = speed * pRealEvt->m_frameTime;
 
@@ -126,13 +145,29 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 					reached = false; // not reaching destination yet
 				}
 
+				// Predict collision
+				PositionBufferCPU* pPoss = pM->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
+				Matrix4x4 worldMatrix = pSN->m_worldTransform;
+				std::vector<Vector3> vertices = MovementHelper::generateVertexForAABB(pPoss->minPos, pPoss->maxPos);
+				MovementHelper::transformVerticesToWorldTrans(vertices, worldMatrix);
+				Vector3 predictPos = curPos;
+				std::vector<Vector3> predictVertices = vertices;
+				PhysicsManager::updatePos(predictPos, dir, dist);
+				PhysicsManager::updateVertices(predictVertices, dir, dist);
+				float predictDis = dist;
+				bool res = PhysicsManager::Instance()->checkIfCollison(vertices, pSN->m_base.getPos(), dir, predictDis);
+ 
+				/*res = PhysicsManager::Instance()->walkOutOfLevels(vertices, pSN->m_base.getPos(), dir, predictDis);*/
+				if (curPos.getZ() > 13) {
+					dir += Vector3(0, -1, 0);
+				}
 				// instantaneous turn
 				pSN->m_base.turnInDirection(dir, 3.1415f);
 				pSN->m_base.setPos(curPos + dir * dist);
 
-				// update positon
-				SoldierNPC* pSol = getFirstParentByTypePtr<SoldierNPC>();
-				pSol->m_base.setPos(curPos + dir * dist);
+				//// update positon
+				//SoldierNPC* pSol = getFirstParentByTypePtr<SoldierNPC>();
+				//pSol->m_base.setPos(curPos + dir * dist);
 			}
 
 			if (reached)
@@ -178,6 +213,10 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 		SoldierNPC* pWP = pGameObjectManagerAddon->getSoldierNPC(m_aimTarget);
 		if (pWP && StringOps::length(pWP->m_name) > 0) {
 			SceneNode* curpSN = getParentsSceneNode();
+			PhysicsComponent* pPC = curpSN->getFirstComponent<PhysicsComponent>();
+			MeshInstance* pMI = pPC->getFirstParentByType<MeshInstance>().getObject<MeshInstance>();
+			Mesh* pM = pMI->getFirstParentByType<Mesh>().getObject<Mesh>();
+			PhysicsManager* pPM = pPC->getFirstParentByType<PhysicsManager>().getObject<PhysicsManager>();
 			if (curpSN)
 			{
 				// Position NOW isHardcode in Solider.CPP!!!!!!1
@@ -201,7 +240,7 @@ void SoldierNPCMovementSM::do_UPDATE(PE::Events::Event *pEvt)
 					}
 					// instantaneous turn
 					curpSN->m_base.turnInDirection(dir, 3.1415f);
-					// curpSN->m_base.setPos(curPos + dir * dist);
+					curpSN->m_base.setPos(curPos + dir * dist);
 				}
 			}
 		}

@@ -329,6 +329,8 @@ void DebugRenderer::drawAABB(std::vector<std::pair<Vector3, Vector3>> sides, Mat
 	Vector3 color(2.0f, 0, 1.0f);
 
 	for (int i = 0; i < 12; ++i) {
+		/*Vector3 startPoint =  sides[i].first;
+		Vector3 endPoint = sides[i].second;*/
 		Vector3 startPoint = worldMatrix * sides[i].first;
 		Vector3 endPoint = worldMatrix * sides[i].second;
 		Vector3 lineVec[] = {startPoint, color, endPoint, color };

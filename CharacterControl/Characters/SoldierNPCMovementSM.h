@@ -5,6 +5,7 @@
 #include "PrimeEngine/MemoryManagement/Handle.h"
 #include "PrimeEngine/Events/Component.h"
 #include "PrimeEngine/Scene/SceneNode.h"
+#include "PrimeEngine/Scene/PhysicsManager.h"
 #include "PrimeEngine/Scene/RootSceneNode.h"
 
 #include "../Events/Events.h"
@@ -44,6 +45,11 @@ namespace Components {
 // movement state machine talks to associated animation state machine
 struct SoldierNPCMovementSM : public PE::Components::Component
 {
+	struct MovementHelper
+	{
+		static std::vector<Vector3> generateVertexForAABB(const Vector3& min, const Vector3& max);
+		static void transformVerticesToWorldTrans(std::vector<Vector3>& vertices, Matrix4x4 worldTrans);
+	};
 	PE_DECLARE_CLASS(SoldierNPCMovementSM);
 	
 	enum States
@@ -81,8 +87,10 @@ struct SoldierNPCMovementSM : public PE::Components::Component
 	PE::Handle m_hAnimationSM;
 	//
 	// State
+	bool haveTempDir = false;
 	Vector3 m_targetPostion;
 	States m_state;
+	Vector3 m_tempDir;
 	char m_aimTarget[32];
 };
 

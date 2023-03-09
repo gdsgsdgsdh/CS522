@@ -3,7 +3,7 @@
 #include "SceneNode.h"
 #include "SkeletonInstance.h"
 #include "DebugRenderer.h"
-
+using namespace PE::Events;
 
 namespace PE {
 	namespace Components {
@@ -20,7 +20,6 @@ namespace PE {
 		void PhysicsComponent::addDefaultComponents()
 		{
 			Component::addDefaultComponents();
-
 
 			// Data components
 

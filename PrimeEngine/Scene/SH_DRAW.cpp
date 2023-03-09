@@ -176,9 +176,15 @@ void MeshHelpers::setZOnlyEffectOfTopEffectSecuence(Mesh *pObj, Handle hNewEffec
 		}
 	}
 }
+void MeshHelpers::transformVerticesToWorldTrans(std::vector<Vector3>& vertices, Matrix4x4 worldTrans) {
+	for (auto& vertice : vertices) {
+		vertice = worldTrans * vertice;
+	}
+	return;
+}
 
-std::vector<std::pair<Vector3, Vector3>> MeshHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max) {
-	Vector3 vertices[8];
+std::vector<Vector3> MeshHelpers::generateVertexForAABB(const Vector3& min, const Vector3& max, std::vector<std::pair<Vector3, Vector3>> &sides) {
+	std::vector<Vector3> vertices(8);
 	vertices[0] = Vector3(min.m_x, min.m_y, min.m_z);
 	vertices[1] = Vector3(min.m_x, min.m_y, max.m_z);
 	vertices[2] = Vector3(min.m_x, max.m_y, min.m_z);
@@ -187,8 +193,6 @@ std::vector<std::pair<Vector3, Vector3>> MeshHelpers::generateVertexForAABB(cons
 	vertices[5] = Vector3(max.m_x, min.m_y, max.m_z);
 	vertices[6] = Vector3(max.m_x, max.m_y, min.m_z);
 	vertices[7] = Vector3(max.m_x, max.m_y, max.m_z);
-
-	std::vector<std::pair<Vector3, Vector3>> sides(12);
 
 	sides[0] = std::make_pair(vertices[0], vertices[1]);
 	sides[1] = std::make_pair(vertices[0], vertices[2]);
@@ -202,8 +206,7 @@ std::vector<std::pair<Vector3, Vector3>> MeshHelpers::generateVertexForAABB(cons
 	sides[9] = std::make_pair(vertices[4], vertices[6]);
 	sides[10] = std::make_pair(vertices[5], vertices[7]);
 	sides[11] = std::make_pair(vertices[6], vertices[7]);
-
-	return sides;
+	return vertices;
 }
 
 PE_IMPLEMENT_SINGLETON_CLASS1(SingleHandler_DRAW, Component);
@@ -281,27 +284,27 @@ void SingleHandler_DRAW::do_GATHER_DRAWCALLS(Events::Event *pEvt)
 			if (hParentSN.isValid()) {
 				SceneNode* pSN = hParentSN.getObject<SceneNode>();
 				PhysicsComponent* pPC = pSN->getFirstComponent<PhysicsComponent>();
-				Handle pPC1 = pSN->getFirstParentByType<CharacterControl::Components::SoldierNPC>();
 				worldMatrix = pSN->m_worldTransform; 
 				m_pos = pSN->m_base.getPos();
 				PositionBufferCPU* pPoss = pMeshCaller->m_hPositionBufferCPU.getObject<PositionBufferCPU>();
 				Vector3 minPos = pPoss->minPos;
 				Vector3 maxPos = pPoss->maxPos;
-
-				std::vector<std::pair<Vector3, Vector3>> sides = MeshHelpers::generateVertexForAABB(minPos, maxPos);
-				if (pPC == NULL) {
-					// Add PhysicsComponent
-					Handle hPC("PHYSICS_COMPONENT", sizeof(PhysicsComponent));
-					PhysicsComponent* pPC = new(hPC) PhysicsComponent(*m_pContext, m_arena, hPC);
-					pPC->addDefaultComponents();
-					PhysicsManager::Instance()->addComponent(hPC);
-					pSN->addComponent(hPC);
+				std::vector<std::pair<Vector3, Vector3>> sides(12);
+				std::vector<Vector3> vertices = MeshHelpers::generateVertexForAABB(minPos, maxPos, sides);
+				MeshHelpers::transformVerticesToWorldTrans(vertices, worldMatrix);
+				if (pPC != NULL && !PhysicsManager::Instance()->checkPhyscisComponents(pPC->getHandle())) {
+					PhysicsManager::Instance()->addObjectPosition(vertices, pSN->m_base);
+					PhysicsManager::Instance()->addPhysicsComponent(pPC->getHandle());
+					
 				}
-				pPC->setVerticesForAABB(sides);
+				DebugRenderer::Instance()->drawAABB(sides, worldMatrix);
+				/*if (pPC != NULL && PhysicsManager::Instance()->getSize() > 7 && PhysicsManager::Instance()->getH() == pPC->getHandle()) {
 
-				if (pPC != NULL) {
+				}
+				else {
 					DebugRenderer::Instance()->drawAABB(sides, worldMatrix);
-				}
+				}*/
+				
 			}
 			 
 
